@@ -5,7 +5,7 @@ public class MathOperationNode {
 	private String operator;
 	private ArrayList<String> operands = new ArrayList<>();
 	
-	
+//Comment
 	public MathOperationNode(String operator, ArrayList<String> operands) {
 		super();
 		this.operator = operator;
