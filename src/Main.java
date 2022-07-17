@@ -8,7 +8,7 @@ public class Main {
 		String variable="";
 		MathExpression expression;
 		
-		/*
+		/**
 		 * do { System.out.println("Type the letter of the variable: "); variable =
 		 * scanner.nextLine(); } while (variable.length()!=1 ||
 		 * MathHelper.isNumeric(variable));
