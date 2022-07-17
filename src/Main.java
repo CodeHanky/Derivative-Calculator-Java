@@ -8,7 +8,7 @@ public class Main {
 		String variable="";
 		MathExpression expression;
 		
-		/**
+		/*
 		 * do { System.out.println("Type the letter of the variable: "); variable =
 		 * scanner.nextLine(); } while (variable.length()!=1 ||
 		 * MathHelper.isNumeric(variable));
@@ -23,7 +23,7 @@ public class Main {
 		 */
 		
 		//expression = new MathExpression("2 ^ x ", "x");
-		//expression = new MathExpression("3*x^2 + 2*x/4 ", "x");
+		expression = new MathExpression("3*x^2 + 2*x/4 ", "x");
 		expression = new MathExpression("2+2*x/4 ", "x");
 	}
 }
