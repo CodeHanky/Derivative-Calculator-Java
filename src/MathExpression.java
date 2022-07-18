@@ -22,6 +22,8 @@ public class MathExpression {
 					/*
 					 * int expressionStart = -1; 
 					 * int expressionEnd = -1;
+					 * 
+					 * 
 					
 					while(true) {
 						if (expressionStrCopy.charAt(leftBracketStart)=='}') 
