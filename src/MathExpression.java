@@ -1,47 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 
-
-/*determineBorderPosition(expressionStrCopy, '{', leftBracketStart, rightBracketEnd, operatorLocations, operator)
- *determineBorderPosition(expressionStrCopy, '}', leftBracketStart, rightBracketEnd, operatorLocations, operator)
-
-
-------------------------
-determineBorderPosition():
-
-while true {
-	if (expressionStrCopy.charAt(bracketFinalPosition)==bracket) 
-		bracketFinalPosition = findClosingBracket(bracketFinalPosition, expressionStrCopy, bracket);
-	
-	if (Arrays.asList(MathHelper.FEASIBLE_OPERATIONS).contains(String.valueOf(expressionStrCopy.charAt(bracketFinalPosition)))) {
-	    
-	    expressionBorder = determineExpressionBorderPosition(bracket, leftBracketStart, rightBracketEnd, false)
-	    expressionStrCopy = insertNewBracket(expressionStrCopy,expressionBorder,bracket,operatorLocations,operator)
-		break;
-	
-	}
-	else if (expressionEdgeBorderCondition) {
-	    expressionBorder = determineExpressionBorderPosition(bracket, leftBracketStart, rightBracketEnd, true)
-		expressionStrCopy = insertNewBracket(expressionStrCopy,expressionBorder,bracket,operatorLocations,operator)
-		break;
-	}
-}
-
--------
-
-determineExpressionBorderPosition(bracket, leftBracketStart, rightBracketEnd, isExpressionEdgeBorder)
-
-    return bracket=='{' ? leftBracketStart + 1*!isExpressionEdgeBorder : rightBracketEnd + 1*isExpressionEdgeBorder
-
-
-
----------
-
-insertNewBracket(expressionStr,position,bracket,operatorLocations,operator) {
-    expressionStrCopy = insertBracket(expressionStr,position, bracket);
-	fixOperationStartIndexes(operatorLocations, position, operator);
-}*/
-
 public class MathExpression {
 	private String cleanExpression;
 	
@@ -56,8 +15,13 @@ public class MathExpression {
 					
 					int leftBracketStart = location - 1;
 					int rightBracketEnd = location + 2;
-					int expressionStart = -1;
-					int expressionEnd = -1;
+					
+					expressionStrCopy = determineLeftBracketPosition(expressionStrCopy, leftBracketStart, operatorLocations, operator);
+					expressionStrCopy = determineRightBracketPosition(expressionStrCopy, rightBracketEnd, operatorLocations, operator);
+					
+					/*
+					 * int expressionStart = -1; int expressionEnd = -1;
+					 
 					
 					while(true) {
 						if (expressionStrCopy.charAt(leftBracketStart)=='}') 
@@ -111,12 +75,62 @@ public class MathExpression {
 						else 
 							rightBracketEnd=expressionStrCopy.length()-1;
 					}
+					*/
 					
 					this.cleanExpression = expressionStrCopy;
 				}
 			}
 		}
 		System.out.println("Program will read expression as " + System.lineSeparator() + this.cleanExpression);
+	}
+
+	private String determineLeftBracketPosition(String expressionStrCopy, int leftBracketStart, ArrayList<Integer> operatorLocations, String operator) {
+		return determineBorderPosition(expressionStrCopy, leftBracketStart, '{', '}', operatorLocations, operator, -1);
+	}
+	
+	private String determineRightBracketPosition(String expressionStrCopy, int rightBracketEnd, ArrayList<Integer> operatorLocations, String operator) {
+		return determineBorderPosition(expressionStrCopy, rightBracketEnd	, '}', '{', operatorLocations, operator, 1);
+	}
+
+	private String determineBorderPosition(String expressionStr, int bracketFinalPosition, char bracket, char bracketMatch, 
+			ArrayList<Integer> operatorLocations, String operator, int positionCheckStep) {
+				
+		while(true) {
+			if (expressionStr.charAt(bracketFinalPosition)==bracketMatch) 
+				bracketFinalPosition = findClosingBracket(bracketFinalPosition, expressionStr, bracketMatch);
+			
+			if (Arrays.asList(MathHelper.FEASIBLE_OPERATIONS).contains(String.valueOf(expressionStr.charAt(bracketFinalPosition)))) {
+				int expressionBorder = determineExpressionBorderPosition(bracket, bracketFinalPosition, 0);
+			    expressionStr = insertNewBracket(expressionStr,expressionBorder,bracket,operatorLocations,operator);
+				break;
+			}
+			else if (checkExpressionEdgeBorderCondition(bracketFinalPosition, bracket, expressionStr)) {
+				int expressionBorder = determineExpressionBorderPosition(bracket, bracketFinalPosition, 1);
+			    expressionStr = insertNewBracket(expressionStr,expressionBorder,bracket,operatorLocations,operator);
+				break;
+			}
+			
+			bracketFinalPosition+=positionCheckStep;
+		}
+		
+		return expressionStr;
+	}
+	
+	private boolean checkExpressionEdgeBorderCondition(int bracketFinalPosition, char bracket, String expressionStr) {
+		return bracket=='{' ? bracketFinalPosition==0 : bracketFinalPosition == expressionStr.length()-1;
+	}
+
+	private int determineExpressionBorderPosition(char bracket, int bracketFinalPosition, int isExpressionEdgeBorder) {
+		return bracket=='{' ? bracketFinalPosition + (1-isExpressionEdgeBorder) : bracketFinalPosition + isExpressionEdgeBorder;
+	}
+	
+	private String insertNewBracket(String expressionStr, int position, char bracket,
+			ArrayList<Integer> operatorLocations, String operator) {
+		
+		expressionStr = insertBracket(expressionStr, position, bracket);
+		fixOperationStartIndexes(operatorLocations, position, operator);
+		
+		return expressionStr;
 	}
 
 	private String insertBracket(String expressionStr, int position, char bracket) {
@@ -177,6 +191,11 @@ public class MathExpression {
 			if (operatorLocation>=position)
 				operatorLocations.set(i, operatorLocation+1);
 		}		
+	}
+
+	public void printOrderOfOperations() {
+		boolean isFirstTerm = true;
+
 	}
 	
 }
