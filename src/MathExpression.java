@@ -20,8 +20,8 @@ public class MathExpression {
 					expressionStrCopy = determineRightBracketPosition(expressionStrCopy, rightBracketEnd, operatorLocations, operator);
 					
 					/*
-					 * int expressionStart = -1; int expressionEnd = -1;
-					 
+					 * int expressionStart = -1; 
+					 * int expressionEnd = -1;
 					
 					while(true) {
 						if (expressionStrCopy.charAt(leftBracketStart)=='}') 
