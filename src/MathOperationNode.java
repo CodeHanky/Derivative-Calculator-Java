@@ -1,22 +1,40 @@
 import java.util.ArrayList;
 
-public class MathOperationNode {
+public class MathOperationNode extends MathOperand {
 
 	private String operator;
-	private ArrayList<String> operands = new ArrayList<>();
-	
-//Comment 9
-	public MathOperationNode(String operator, ArrayList<String> operands) {
-		super();
+	private MathOperand leftOperand;
+	private MathOperand rightOperand;
+	private int operationStart, operationEnd;	
+
+	public MathOperationNode(String operator, MathOperand leftOperand, MathOperand rightOperand, int operationStart, int operationEnd, MathHelper.OPERAND_TYPE type) {
+		super(type);
 		this.operator = operator;
-		this.operands = operands;
+		this.leftOperand = leftOperand;
+		this.rightOperand = rightOperand;
+		this.operationStart = operationStart;
+		this.operationEnd = operationEnd;
 	}
 
 	public String getOperator() {
 		return operator;
 	}
 
-	public ArrayList<String> getOperands() {
-		return operands;
+	public ArrayList<MathOperand> getOperands() {
+		return ;
 	}
+
+	public int getOperationEnd() {
+		return operationEnd;
+	}
+
+	public void setOperationEnd(int operationEnd) {
+		this.operationEnd = operationEnd;
+	}
+
+	public void setOperands(ArrayList<MathOperand> operands) {
+		this.operands = operands;
+	}
+	
+	public void 
 }

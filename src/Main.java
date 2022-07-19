@@ -22,10 +22,14 @@ public class Main {
 		 * expression = new MathExpression(expressionStr,variable);
 		 */
 		
-		expression = new MathExpression("2 ^ x ", "x");
+		//expression = new MathExpression("2 ^ x ", "x");
 		expression = new MathExpression("3*x^2 + 2*x/4 ", "x");
-		expression.printOrderOfOperations();
+		System.out.println("---------------------------------"+System.lineSeparator()+"Operations will be calculated in the following order");
+		expression.printOrderOfOperations(expression.getRootNode(), "");
+		expression.calculateDerivative(expression.getRootNode());
+		
 		expression = new MathExpression("2+2*x/4 ", "x");
-		expression.printOrderOfOperations();
+		System.out.println("---------------------------------"+System.lineSeparator()+"Operations will be calculated in the following order");
+		expression.printOrderOfOperations(expression.getRootNode(), "");
 	}
 }

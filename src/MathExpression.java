@@ -3,8 +3,13 @@ import java.util.Arrays;
 
 public class MathExpression {
 	private String cleanExpression;
+	private MathOperationNode rootNode;
+	private String variable;
 	
 	public MathExpression(String expressionStr, String variable) {
+		
+		this.variable = variable;
+		
 		this.cleanExpression = expressionStr.replace(" ", "");
 		for(String operator: MathHelper.FEASIBLE_OPERATIONS) {
 			if (cleanExpression.contains(String.valueOf(operator))) {
@@ -19,71 +24,55 @@ public class MathExpression {
 					expressionStrCopy = determineLeftBracketPosition(expressionStrCopy, leftBracketStart, operatorLocations, operator);
 					expressionStrCopy = determineRightBracketPosition(expressionStrCopy, rightBracketEnd, operatorLocations, operator);
 					
-					/*
-					 * int expressionStart = -1; 
-					 * int expressionEnd = -1;
-					 * 
-					 * 
-					
-					while(true) {
-						if (expressionStrCopy.charAt(leftBracketStart)=='}') 
-							leftBracketStart = findClosingBracket(leftBracketStart, expressionStrCopy, '}');
-					
-						if (Arrays.asList(MathHelper.FEASIBLE_OPERATIONS).contains(String.valueOf(expressionStrCopy.charAt(leftBracketStart)))) {
-							expressionStart = leftBracketStart + 1;
-							expressionStrCopy = insertBracket(expressionStrCopy,expressionStart, '{');
-							fixOperationStartIndexes(operatorLocations, expressionStart, operator);
-							break;
-						}
-						else if (leftBracketStart==0) {
-							expressionStart = leftBracketStart;
-							expressionStrCopy = insertBracket(expressionStrCopy,expressionStart, '{');
-							fixOperationStartIndexes(operatorLocations, expressionStart, operator);
-							break;
-						}
-						
-						if (leftBracketStart>=0) 
-							leftBracketStart--; 
-						else 
-							leftBracketStart=0;
-					}
-					
-					while(true) {
-						if (expressionStrCopy.charAt(rightBracketEnd)=='{') 
-							rightBracketEnd = findClosingBracket(rightBracketEnd, expressionStrCopy, '{');
-					
-						if (rightBracketEnd<expressionStrCopy.length()) {
-							if (Arrays.asList(MathHelper.FEASIBLE_OPERATIONS).contains(String.valueOf(expressionStrCopy.charAt(rightBracketEnd)))) {
-								expressionEnd = rightBracketEnd;
-								expressionStrCopy = insertBracket(expressionStrCopy,expressionEnd, '}');
-								fixOperationStartIndexes(operatorLocations, expressionEnd, operator);
-								break;
-							}
-							else if (rightBracketEnd==expressionStrCopy.length()-1) {
-								expressionEnd = rightBracketEnd + 1;
-								expressionStrCopy = insertBracket(expressionStrCopy,expressionEnd, '}');
-								fixOperationStartIndexes(operatorLocations, expressionEnd, operator);
-								break;
-							}
-						}
-						else {
-							expressionStrCopy = insertBracket(expressionStrCopy,expressionStrCopy.length(),'}');
-							expressionEnd=expressionStrCopy.length()-1;
-							break;
-						}
-						
-						if (rightBracketEnd<expressionStrCopy.length()) 
-							rightBracketEnd++; 
-						else 
-							rightBracketEnd=expressionStrCopy.length()-1;
-					}
-					*/
-					
 					this.cleanExpression = expressionStrCopy;
 				}
 			}
 		}
 		System.out.println("Program will read expression as " + System.lineSeparator() + this.cleanExpression);
+		
+		this.rootNode = getOperations(0);
+		this.rootNode.setOperationEnd(this.cleanExpression.length());
+	}
+
+	private MathOperationNode getOperations(int operationStart) {
+		
+		ArrayList<MathOperand> expressionOperands = new ArrayList<>();
+		int i = operationStart;
+		int operationEnd = -1;
+		String operator = "";
+		
+		while (i<this.cleanExpression.length()) {
+			if (this.cleanExpression.charAt(i)=='{') {
+				MathOperationNode innerExpression = getOperations(i+1);
+				i = innerExpression.getOperationEnd() + 1;
+				expressionOperands.add(innerExpression); 
+				continue;
+			}
+			else if (this.cleanExpression.charAt(i)=='}') {
+				operationEnd = i;
+				break;
+			}
+			else if (Arrays.asList(MathHelper.FEASIBLE_OPERATIONS).contains(String.valueOf(this.cleanExpression.charAt(i)))) {
+				operator = String.valueOf(this.cleanExpression.charAt(i));
+			}
+			else {
+				expressionOperands.add(determineTypeOfOperand(String.valueOf(this.cleanExpression.charAt(i))));
+			}
+			
+			i++;
+		}
+		
+		return new MathOperationNode(operator, expressionOperands, operationStart, operationEnd, MathHelper.OPERAND_TYPE.EXPRESSION);
+	}
+
+	private MathOperand determineTypeOfOperand(String operand) {
+		
+		if (operand.equals(this.variable)) {
+			return new MathOperand(operand, MathHelper.OPERAND_TYPE.VARIABLE);
+		}
+		else {
+			return new MathOperand(operand, MathHelper.OPERAND_TYPE.CONSTANT);
+		}
 	}
 
 	private String determineLeftBracketPosition(String expressionStrCopy, int leftBracketStart, ArrayList<Integer> operatorLocations, String operator) {
@@ -177,7 +166,7 @@ public class MathExpression {
 		int i = rangeStart;
 		while(i!=rangeEnd) {
 			if (expressionStr.charAt(i)==match)
-				return i>0 ? i+step : 0;
+				return i>0 ? (i!=rangeEnd-1 ? i+step : i) : 0;
 			else if (expressionStr.charAt(i)==bracket)
 				i = findClosingBracket(i, expressionStr, bracket);
 			else
@@ -195,9 +184,53 @@ public class MathExpression {
 		}		
 	}
 
-	public void printOrderOfOperations() {
+	public String printOrderOfOperations(MathOperationNode currentNode, String returnString) {
 		boolean isFirstTerm = true;
+		for (MathOperand operand : currentNode.getOperands()) {
+			if (isFirstTerm) {
+				isFirstTerm = false;
+			}
+			else {
+				returnString+=currentNode.getOperator();
+			}
+			
+			if (operand.getType().equals(MathHelper.OPERAND_TYPE.EXPRESSION)) {
+				String returnedString = printOrderOfOperations((MathOperationNode) operand, "");
+				returnString+="("+returnedString+")";
+			}
+			else { 
+				returnString+=operand.getOperand();
+			}
+		}
+		
+		System.out.println(returnString);
+		return returnString;
+	}
 
+	public MathOperationNode getRootNode() {
+		return this.rootNode;
+	}
+
+	public String calculateDerivative(MathOperationNode currentNode) {
+		boolean expressionContainsConstant = false;
+		boolean expressionContainsVariable = false;
+		
+		for (MathOperand operand : currentNode.getOperands()) {
+			switch (operand.getType()) {
+				case EXPRESSION:
+					operand.setDerivative(calculateDerivative((MathOperationNode) operand));
+					break;
+				case VARIABLE:
+					expressionContainsVariable = true;
+					break;
+				case CONSTANT:
+					expressionContainsConstant = true;
+					break;
+			}
+		}
+		
+		return Derivative.calculate(this.variable, currentNode.getOperands(), currentNode.getOperator(), expressionContainsConstant, expressionContainsVariable);;
+		
 	}
 	
 }
