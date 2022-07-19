@@ -24,4 +24,16 @@ public class MathOperand {
 	public void setDerivative(String derivative) {
 		this.derivative = derivative;
 	}
+
+	public boolean isConstant() {
+		return this.getType().equals(MathHelper.OPERAND_TYPE.CONSTANT);
+	}
+	
+	public boolean isVariable() {
+		return this.getType().equals(MathHelper.OPERAND_TYPE.VARIABLE);
+	}
+	
+	public boolean isExpression() {
+		return this.getType().equals(MathHelper.OPERAND_TYPE.EXPRESSION);
+	}
 }

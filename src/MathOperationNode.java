@@ -7,11 +7,11 @@ public class MathOperationNode extends MathOperand {
 	private MathOperand rightOperand;
 	private int operationStart, operationEnd;	
 
-	public MathOperationNode(String operator, MathOperand leftOperand, MathOperand rightOperand, int operationStart, int operationEnd, MathHelper.OPERAND_TYPE type) {
+	public MathOperationNode(String operator, ArrayList<MathOperand> operands, int operationStart, int operationEnd, MathHelper.OPERAND_TYPE type) {
 		super(type);
 		this.operator = operator;
-		this.leftOperand = leftOperand;
-		this.rightOperand = rightOperand;
+		this.leftOperand = operands.get(0);
+		this.rightOperand = (operands.size()==2) ? operands.get(1) : null;
 		this.operationStart = operationStart;
 		this.operationEnd = operationEnd;
 	}
@@ -20,8 +20,12 @@ public class MathOperationNode extends MathOperand {
 		return operator;
 	}
 
-	public ArrayList<MathOperand> getOperands() {
-		return ;
+	public MathOperand getLeftOperand() {
+		return leftOperand;
+	}
+	
+	public MathOperand getRightOperand() {
+		return rightOperand;
 	}
 
 	public int getOperationEnd() {
@@ -32,9 +36,9 @@ public class MathOperationNode extends MathOperand {
 		this.operationEnd = operationEnd;
 	}
 
-	public void setOperands(ArrayList<MathOperand> operands) {
+	/*public void setOperands(ArrayList<MathOperand> operands) {
 		this.operands = operands;
-	}
+	}*/
 	
-	public void 
+	//public void 
 }

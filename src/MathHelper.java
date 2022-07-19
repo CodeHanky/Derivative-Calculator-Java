@@ -1,3 +1,4 @@
+import java.util.HashMap;
 
 public class MathHelper {
 	
@@ -12,4 +13,20 @@ public class MathHelper {
 			return false;
 		}
 	}
+	
+	public static String reduceExponent(String constantOperand) {
+		if (isNumeric(constantOperand)) {
+			int exp = Integer.parseInt(constantOperand);
+			switch (exp) {
+				case 1, 2:
+					return "";
+				default:
+					return String.valueOf(exp-1);
+			}
+		}
+		else {
+			return constantOperand + "-1";
+		}
+	}
+	
 }

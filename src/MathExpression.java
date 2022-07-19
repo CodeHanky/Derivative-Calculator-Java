@@ -63,6 +63,7 @@ public class MathExpression {
 		}
 		
 		return new MathOperationNode(operator, expressionOperands, operationStart, operationEnd, MathHelper.OPERAND_TYPE.EXPRESSION);
+				//(operator, expressionOperands, operationStart, operationEnd, MathHelper.OPERAND_TYPE.EXPRESSION);
 	}
 
 	private MathOperand determineTypeOfOperand(String operand) {
@@ -186,7 +187,12 @@ public class MathExpression {
 
 	public String printOrderOfOperations(MathOperationNode currentNode, String returnString) {
 		boolean isFirstTerm = true;
-		for (MathOperand operand : currentNode.getOperands()) {
+		MathOperand leftOperand = currentNode.getLeftOperand();
+		MathOperand rightOperand = currentNode.getRightOperand();
+		
+		for (MathOperand operand : Arrays.asList(leftOperand, rightOperand)) {
+			if (operand==null) continue;
+			
 			if (isFirstTerm) {
 				isFirstTerm = false;
 			}
@@ -214,11 +220,26 @@ public class MathExpression {
 	public String calculateDerivative(MathOperationNode currentNode) {
 		boolean expressionContainsConstant = false;
 		boolean expressionContainsVariable = false;
+		String operator = currentNode.getOperator();
+		MathOperand leftOperand = currentNode.getLeftOperand();
+		MathOperand rightOperand = currentNode.getRightOperand();
 		
-		for (MathOperand operand : currentNode.getOperands()) {
-			switch (operand.getType()) {
+		switch (leftOperand.getType()) {
+			case EXPRESSION:
+				leftOperand.setDerivative(calculateDerivative((MathOperationNode) leftOperand));
+				break;
+			case VARIABLE:
+				expressionContainsVariable = true;
+				break;
+			case CONSTANT:
+				expressionContainsConstant = true;
+				break;
+		}
+		
+		if (rightOperand!=null) {
+			switch (rightOperand.getType()) {
 				case EXPRESSION:
-					operand.setDerivative(calculateDerivative((MathOperationNode) operand));
+					rightOperand.setDerivative(calculateDerivative((MathOperationNode) rightOperand));
 					break;
 				case VARIABLE:
 					expressionContainsVariable = true;
@@ -229,7 +250,10 @@ public class MathExpression {
 			}
 		}
 		
-		return Derivative.calculate(this.variable, currentNode.getOperands(), currentNode.getOperator(), expressionContainsConstant, expressionContainsVariable);;
+		
+		
+		//return "";
+		return Derivative.calculate(this.variable, operator, leftOperand, rightOperand, expressionContainsConstant, expressionContainsVariable);
 		
 	}
 	
