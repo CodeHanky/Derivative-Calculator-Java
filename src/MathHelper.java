@@ -28,5 +28,10 @@ public class MathHelper {
 			return constantOperand + "-1";
 		}
 	}
+
+	public static String calcSquareOfDivisor(MathOperand rightOperand) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }
